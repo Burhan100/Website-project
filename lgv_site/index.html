@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lahore Grand Venues — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./asserts/Styling/style.css" />
+  <link rel="stylesheet" href="./asserts/Styling/responsive.css" />
+</head>
+<body>
+
+  <nav id="mainNav"></nav>
+  <div class="mobile-menu" id="mobileMenu"></div>
+
+  <!-- ══ HOME PAGE ══ -->
+  <div class="page active" id="page-home">
+
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <h1>Discover your perfect <em>wedding</em> venue</h1>
+        <p class="hero-sub">Hand-picked villas, historic estates & breathtaking landscapes — curated for couples who believe in magic.</p>
+        <div class="hero-btns">
+          <button class="btn-hero btn-hero-g" onclick="window.location.href='browse.html'">Explore Venues →</button>
+          <button class="btn-hero btn-hero-o" onclick="window.location.href='hall.html'">Book a Hall</button>
+        </div>
+      </div>
+      <a class="hero-scroll" href="#home-s1"><span>Scroll</span><div class="scroll-ln"></div></a>
+    </section>
+
+    <section class="sec" id="home-s1">
+      <div class="center">
+        <p class="sec-tag">Everything for your day</p>
+        <h2 class="sec-title">Our Specialities</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="cat-grid">
+        <div class="cat-card" onclick="lb('https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1200&q=80','Photography')">
+          <img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=700&q=80" alt="Photography" loading="lazy" />
+          <div class="cat-ov"></div><div class="cat-lb">Photography</div>
+        </div>
+        <div class="cat-card" onclick="lb('https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1200&q=80','Ceremony')">
+          <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=700&q=80" alt="Ceremony" loading="lazy" />
+          <div class="cat-ov"></div><div class="cat-lb">Ceremony</div>
+        </div>
+        <div class="cat-card" onclick="lb('https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1200&q=80','Wedding Design')">
+          <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=700&q=80" alt="Wedding Design" loading="lazy" />
+          <div class="cat-ov"></div><div class="cat-lb">Wedding Design</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" style="padding-top:0">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:30px">
+        <div>
+          <p class="sec-tag">Real love stories</p>
+          <h2 class="sec-title">Featured Weddings</h2>
+        </div>
+        <button class="btn btn-ol btn-sm" onclick="window.location.href='testimonials.html'">View All →</button>
+      </div>
+      <div class="wed-grid">
+        <div class="wed-card" onclick="lb('https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=1200&q=80','Dianne & Adrian')">
+          <img src="https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=800&q=80" alt="Wedding" loading="lazy" />
+          <div class="wed-info"><div class="wed-tag">The Wedding of</div><h3>Dianne & Adrian</h3></div>
+        </div>
+        <div class="wed-card" onclick="lb('https://images.unsplash.com/photo-1583939411023-c86c3c6a2ebe?w=1200&q=80','Zoe & Adrian')">
+          <img src="https://images.unsplash.com/photo-1583939411023-c86c3c6a2ebe?w=800&q=80" alt="Wedding" loading="lazy" />
+          <div class="wed-info"><div class="wed-tag">The Wedding of</div><h3>Zoe & Adrian</h3></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="bg-cream" style="padding:76px 0">
+      <div class="center" style="padding:0 52px">
+        <p class="sec-tag">Where love happens</p>
+        <h2 class="sec-title">Locations</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="loc-grid" style="max-width:1240px;margin:36px auto 0;padding:0 52px">
+        <div class="loc-card" onclick="window.location.href='browse.html?filter=Florence'">
+          <img src="https://images.unsplash.com/photo-1541370976299-4d24be35769f?w=500&q=80" alt="Florence" loading="lazy" /><div class="loc-name">Florence</div>
+        </div>
+        <div class="loc-card" onclick="window.location.href='browse.html?filter=Chianti'">
+          <img src="https://images.unsplash.com/photo-1504093376055-b9c3a3e7fef4?w=500&q=80" alt="Chianti" loading="lazy" /><div class="loc-name">Chianti</div>
+        </div>
+        <div class="loc-card" onclick="window.location.href='browse.html?filter=Siena'">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80" alt="Siena" loading="lazy" /><div class="loc-name">Siena</div>
+        </div>
+        <div class="loc-card" onclick="window.location.href='browse.html?filter=Umbria'">
+          <img src="https://images.unsplash.com/photo-1482275548304-a58859dc31b7?w=500&q=80" alt="Umbria" loading="lazy" /><div class="loc-name">Umbria</div>
+        </div>
+        <div class="loc-card" onclick="window.location.href='browse.html?filter=Amalfi'">
+          <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=500&q=80" alt="Amalfi" loading="lazy" /><div class="loc-name">Amalfi Coast</div>
+        </div>
+        <div class="loc-card loc-more" onclick="window.location.href='browse.html'">
+          <div class="loc-more-icon">→</div><span>Browse more</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="sec">
+      <p class="sec-tag" style="margin-bottom:24px">Featured venue</p>
+      <div class="ven-layout">
+        <div class="ven-img" onclick="lb('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80','Villa Balbianello')">
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80" alt="Villa Balbianello" loading="lazy" />
+        </div>
+        <div>
+          <div class="ven-num">01 / 12</div>
+          <h2 class="ven-title">Villa Balbianello</h2>
+          <p class="ven-loc">Lake Como, Lombardy</p>
+          <p class="ven-desc">The whole complex consists of two residential buildings, a church, and a portico known as Loggia Durini that can host weddings and events in a truly spectacular setting overlooking the lake.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn btn-dk" onclick="window.location.href='booking.html'">Request Booking</button>
+            <button class="btn btn-ol" onclick="window.location.href='contact.html'">Enquire</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIAL STRIP -->
+    <div class="testi-strip">
+      <div style="max-width:1240px;margin:0 auto">
+        <div class="center">
+          <p class="sec-tag" style="color:rgba(255,255,255,0.4)">From happy couples</p>
+          <h2 class="sec-title" style="color:white">Testimonials</h2>
+          <div class="divider"></div>
+        </div>
+        <div class="testi-slider">
+          <div class="testi-track" id="tTrack">
+            <div class="testi-slide">
+              <p class="testi-q">"Working with Lahore Grand Venues was the best decision we made. They found us the most breathtaking villa in Tuscany and every detail was absolutely perfect."</p>
+              <div class="testi-auth">
+                <div class="testi-av"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="" /></div>
+                <div><div class="testi-nm">Sarah & Marco</div><div class="testi-cp">Florence, 2024</div></div>
+              </div>
+            </div>
+            <div class="testi-slide">
+              <p class="testi-q">"From the first email to the last dance, Lahore Grand Venues was there every step. Our Chianti wedding exceeded every dream we ever had as a couple."</p>
+              <div class="testi-auth">
+                <div class="testi-av"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="" /></div>
+                <div><div class="testi-nm">Emma & Luca</div><div class="testi-cp">Chianti, 2024</div></div>
+              </div>
+            </div>
+            <div class="testi-slide">
+              <p class="testi-q">"The venue they chose overlooked the most gorgeous valley. Our guests are still talking about it. Absolutely magical and worth every penny."</p>
+              <div class="testi-auth">
+                <div class="testi-av"><img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=100&q=80" alt="" /></div>
+                <div><div class="testi-nm">Dianne & Adrian</div><div class="testi-cp">Val d'Orcia, 2025</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-dots" id="tDots">
+            <div class="testi-dot active" onclick="goT(0)"></div>
+            <div class="testi-dot" onclick="goT(1)"></div>
+            <div class="testi-dot" onclick="goT(2)"></div>
+          </div>
+          <div class="testi-arrows">
+            <button class="testi-arr" onclick="prevT()">←</button>
+            <button class="testi-arr" onclick="nextT()">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer"></div>
+  </div><!-- /page-home -->
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLb()">
+    <button class="lb-close" onclick="closeLb()">✕</button>
+    <img class="lb-img" id="lbImg" src="" alt="" />
+    <div class="lb-caption" id="lbCap"></div>
+  </div>
+
+  <button id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+  <script src="./asserts/JS/shared.js"></script>
+  <script>
+    // Testimonial slider
+    let tIdx = 0;
+    function goT(i) {
+      tIdx = i;
+      document.getElementById('tTrack').style.transform = `translateX(-${i * 100}%)`;
+      document.querySelectorAll('.testi-dot').forEach((d, j) => d.classList.toggle('active', j === i));
+    }
+    function nextT() { goT((tIdx + 1) % 3); }
+    function prevT() { goT((tIdx + 2) % 3); }
+    setInterval(nextT, 5200);
+
+    // Apply URL filter from location cards
+    const urlParam = new URLSearchParams(window.location.search).get('filter');
+    if (urlParam) {
+      window.location.href = 'browse.html?filter=' + urlParam;
+    }
+  </script>
+</body>
+</html>

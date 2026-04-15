@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lahore Grand Venues — Hall Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./asserts/Styling/style.css" />
+  <link rel="stylesheet" href="./asserts/Styling/responsive.css" />
+</head>
+<body>
+
+  <nav id="mainNav"></nav>
+  <div class="mobile-menu" id="mobileMenu"></div>
+
+  <div class="page active" id="page-hall">
+    <div class="page-hero">
+      <div class="page-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1600&q=80')"></div>
+      <div class="page-hero-overlay"></div>
+      <div class="page-hero-content">
+        <h1>Hall Booking</h1>
+        <p>Choose your perfect space and check availability instantly.</p>
+      </div>
+    </div>
+
+    <section class="sec">
+      <p class="sec-tag">Step 1 — Select your hall</p>
+      <h2 class="sec-title" style="margin-bottom:32px">Choose a Venue Hall</h2>
+      <div class="hall-grid" id="hallGrid"></div>
+
+      <div id="hallFormArea" style="display:none">
+        <div style="background:white;border-radius:var(--r);padding:36px;border:1px solid rgba(0,0,0,0.06)">
+          <div class="ai-badge">AI Recommendation Active</div>
+          <div class="ai-panel" id="hallAiPanel">
+            <h4>AI Venue Match</h4>
+            <div class="ai-suggestion" id="hallAiSug">Fill in your details below and I'll personalise your recommendation…</div>
+          </div>
+          <p class="sec-tag" style="margin-bottom:20px">Step 2 — Enter booking details</p>
+
+          <div class="frow">
+            <div class="fgrp"><label class="flbl">Couple / Client Name</label><input class="finp" id="hName" placeholder="Sarah & Marco" oninput="debounceHallAI()" /></div>
+            <div class="fgrp"><label class="flbl">Email Address</label><input class="finp" id="hEmail" type="email" placeholder="you@example.com" /></div>
+          </div>
+          <div class="frow">
+            <div class="fgrp"><label class="flbl">Event Date</label><input class="finp" id="hDate" type="date" onchange="updateCal()" /></div>
+            <div class="fgrp">
+              <label class="flbl">Event Time</label>
+              <select class="fsel2" id="hTime">
+                <option>Morning (9am–12pm)</option><option>Afternoon (12pm–5pm)</option>
+                <option>Evening (5pm–11pm)</option><option>Full Day</option>
+              </select>
+            </div>
+          </div>
+          <div class="frow">
+            <div class="fgrp"><label class="flbl">Number of Guests</label><input class="finp" id="hGuests" type="number" min="10" max="500" placeholder="80" oninput="debounceHallAI()" /></div>
+            <div class="fgrp">
+              <label class="flbl">Event Type</label>
+              <select class="fsel2" id="hType" onchange="debounceHallAI()">
+                <option>Wedding Reception</option><option>Ceremony Only</option>
+                <option>Ceremony + Reception</option><option>Engagement Party</option><option>Anniversary Dinner</option>
+              </select>
+            </div>
+          </div>
+          <div class="fgrp">
+            <label class="flbl">Additional Requirements</label>
+            <textarea class="ftxt" id="hNotes" placeholder="Catering preferences, décor requests, accessibility needs…" oninput="debounceHallAI()"></textarea>
+          </div>
+
+          <!-- Availability Calendar -->
+          <div style="margin-bottom:28px">
+            <p class="sec-tag" style="margin-bottom:12px">Availability Calendar — <span id="calMonthLbl">March 2025</span></p>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <button onclick="changeMonth(-1)" style="background:var(--cream);border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-family:'Jost',sans-serif;font-size:13px">← Prev</button>
+              <span id="calTitle" style="font-family:'Cormorant Garamond',serif;font-size:22px"></span>
+              <button onclick="changeMonth(1)"  style="background:var(--cream);border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-family:'Jost',sans-serif;font-size:13px">Next →</button>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+            <div style="display:flex;gap:20px;margin-top:14px;font-size:12px;color:var(--stone)">
+              <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;background:#f5e8e8;border-radius:3px;display:inline-block"></span>Taken</span>
+              <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;background:var(--dg);border-radius:3px;display:inline-block"></span>Selected</span>
+              <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;border:1px solid var(--gold);border-radius:3px;display:inline-block"></span>Today</span>
+            </div>
+          </div>
+
+          <div id="hallFormInner">
+            <button class="fsub" onclick="submitHall()">Confirm Hall Booking →</button>
+          </div>
+          <div class="fsuccess" id="hallSuccess" style="display:none">
+            <div class="fsuccess-icon">🌿</div>
+            <h3>Booking Confirmed!</h3>
+            <p>Your hall booking request has been received. We'll send a confirmation to your email within 2 hours.</p>
+            <button class="btn btn-dk" style="margin-top:24px" onclick="window.location.href='index.html'">Back to Home</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="page-footer"></div>
+  </div>
+
+  <button id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+  <script src="./asserts/JS/shared.js"></script>
+  <script src="./asserts/JS/data.js"></script>
+  <script>
+    let selHall = null;
+
+    function renderHalls() {
+      document.getElementById('hallGrid').innerHTML = HALLS.map(h =>
+        `<div class="hall-card${selHall === h.id ? ' sel' : ''}" id="hc-${h.id}">
+          <div class="hall-card-img"><img src="${h.img}" alt="${h.name}" loading="lazy"></div>
+          <div class="hall-card-body">
+            <div class="hall-card-name">${h.name}</div>
+            <div class="hall-card-cap">${h.cap}</div>
+            <div class="hall-card-price">${h.price} <span>/ event</span></div>
+            <button class="hall-select-btn" onclick="selectHall(${h.id})">${selHall === h.id ? '✓ Selected' : 'Select this hall'}</button>
+          </div>
+        </div>`
+      ).join('');
+    }
+
+    function selectHall(id) {
+      selHall = id;
+      renderHalls();
+      document.getElementById('hallFormArea').style.display = 'block';
+      document.getElementById('hallFormArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(debounceHallAI, 600);
+    }
+
+    // Calendar
+    let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
+    const takenDays = [5, 8, 14, 19, 22, 27];
+
+    function changeMonth(d) {
+      calMonth += d;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      if (calMonth < 0)  { calMonth = 11; calYear--; }
+      renderCal();
+    }
+    function updateCal() {
+      const v = document.getElementById('hDate').value;
+      if (v) { const d = new Date(v); calYear = d.getFullYear(); calMonth = d.getMonth(); renderCal(); }
+    }
+    function renderCal() {
+      const mn = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      document.getElementById('calTitle').textContent = `${mn[calMonth]} ${calYear}`;
+      document.getElementById('calMonthLbl').textContent = `${mn[calMonth]} ${calYear}`;
+      const first = new Date(calYear, calMonth, 1).getDay();
+      const days  = new Date(calYear, calMonth + 1, 0).getDate();
+      const today = new Date();
+      let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="cal-day-hdr">${d}</div>`).join('');
+      for (let i = 0; i < first; i++) html += `<div class="cal-day empty"></div>`;
+      const selDate = document.getElementById('hDate').value;
+      const selD = selDate ? new Date(selDate).getDate() : null;
+      for (let d = 1; d <= days; d++) {
+        const taken   = takenDays.includes(d);
+        const isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+        const isSel   = d === selD && calMonth === new Date(selDate + '').getMonth() && calYear === new Date(selDate + '').getFullYear();
+        html += `<div class="cal-day${taken ? ' taken' : ''}${isToday ? ' today' : ''}${isSel ? ' sel' : ''}" ${taken ? 'title="This date is taken"' : ''}>${d}</div>`;
+      }
+      document.getElementById('calGrid').innerHTML = html;
+    }
+
+    function submitHall() {
+      if (!selHall) { alert('Please select a hall.'); return; }
+      const n = document.getElementById('hName').value.trim();
+      const e = document.getElementById('hEmail').value.trim();
+      if (!n || !e) { alert('Please fill in your name and email.'); return; }
+      document.getElementById('hallFormInner').style.display = 'none';
+      document.getElementById('hallSuccess').style.display = 'block';
+    }
+
+    // AI helpers
+    function aiResponse() {
+      return {
+        hall_empty: 'Fill in your details and I\'ll suggest the best hall configuration for your event.',
+        hall_basic: 'Great choice! Based on your guest count, I recommend round tables of 8 with a central dance floor.',
+        hall_detailed: 'For a wedding of this style, I suggest a cocktail hour in the Garden Pavilion followed by dinner. The evening canapés served on the terrace would be magical.',
+      };
+    }
+    let hallAiTimer = null;
+    function debounceHallAI() { clearTimeout(hallAiTimer); hallAiTimer = setTimeout(generateHallAI, 1200); }
+    function generateHallAI() {
+      const sug = document.getElementById('hallAiSug');
+      if (!sug) return;
+      const n = document.getElementById('hName').value.trim();
+      const g = document.getElementById('hGuests').value;
+      const t = document.getElementById('hType').value;
+      const notes = document.getElementById('hNotes').value.trim();
+      sug.classList.add('loading');
+      setTimeout(() => {
+        sug.classList.remove('loading');
+        if (!n && !g) sug.textContent = aiResponse().hall_empty;
+        else if (notes.length > 10) sug.textContent = aiResponse().hall_detailed;
+        else sug.textContent = `For a ${t.toLowerCase()} with ${g || 'your'} guests, I recommend a cocktail hour in the Garden Pavilion followed by dinner in the ${selHall === 1 ? 'Grand Ballroom' : selHall === 2 ? 'Garden Pavilion' : 'Cellar Room'}. ${+g > 150 ? 'With this guest count, only the Grand Ballroom can comfortably accommodate everyone.' : +g < 50 ? 'The intimate Cellar Room would create a truly special atmosphere.' : 'The Garden Pavilion would be ideal for your party size.'}`;
+      }, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { renderHalls(); renderCal(); });
+  </script>
+</body>
+</html>

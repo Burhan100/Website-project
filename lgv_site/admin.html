@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lahore Grand Venues — Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./asserts/Styling/style.css" />
+  <link rel="stylesheet" href="./asserts/Styling/responsive.css" />
+</head>
+<body>
+
+  <!-- No shared nav on admin — it has its own sidebar -->
+
+  <!-- ADMIN LOGIN MODAL -->
+  <div id="adminLoginOverlay" class="admin-modal-overlay" style="display:none" onclick="closeAdminLoginModal(event)">
+    <div class="admin-modal-card">
+      <div class="admin-modal-icon">⚙</div>
+      <h2 class="admin-modal-title">Admin Access</h2>
+      <p class="admin-modal-sub">This area is restricted. Please enter your admin credentials.</p>
+      <div class="auth-msg" id="adminLoginMsg"></div>
+      <div class="auth-field">
+        <label>Admin Email</label>
+        <input type="email" id="adminEmailInp" placeholder="admin@lgv.com" onkeydown="if(event.key==='Enter')adminModalLogin()" />
+      </div>
+      <div class="auth-field">
+        <label>Admin Password</label>
+        <div class="auth-pw-wrap">
+          <input type="password" id="adminPwInp" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminModalLogin()" />
+          <button class="auth-eye" onclick="togglePw('adminPwInp',this)">👁</button>
+        </div>
+      </div>
+      <button class="auth-submit" onclick="adminModalLogin()">Enter Dashboard</button>
+      <p style="text-align:center;margin-top:14px;font-size:12px;color:var(--stone)">
+        Hint: <code>admin@lgv.com</code> / <code>Admin@1234</code>
+      </p>
+      <button class="admin-modal-close" onclick="closeAdminLoginModal()">✕ Cancel</button>
+    </div>
+  </div>
+
+  <div class="page active" id="page-admin">
+    <div class="admin-wrap">
+      <!-- SIDEBAR -->
+      <div class="admin-sidebar">
+        <div style="padding-top:80px">
+          <div class="brand">𝓡 Admin</div>
+          <ul class="admin-nav">
+            <li><a class="active" onclick="switchAdmin('aDash')"     id="anDash">    <span class="aicon">📊</span> Dashboard</a></li>
+            <li><a onclick="switchAdmin('aBookings')"                id="anBookings"><span class="aicon">📋</span> Bookings</a></li>
+            <li><a onclick="switchAdmin('aVenues')"                  id="anVenues">  <span class="aicon">🏛️</span> Venues</a></li>
+            <li><a onclick="switchAdmin('aClients')"                 id="anClients"> <span class="aicon">👥</span> Clients</a></li>
+            <li><a onclick="switchAdmin('aRevenue')"                 id="anRevenue"> <span class="aicon">💰</span> Revenue</a></li>
+            <li><a onclick="switchAdmin('aSettings')"                id="anSettings"><span class="aicon">⚙️</span> Settings</a></li>
+            <li><a href="index.html" style="margin-top:20px;border-top:1px solid rgba(255,255,255,0.07);padding-top:20px"><span class="aicon">←</span> Back to Site</a></li>
+            <li><a onclick="adminLogout()" style="color:#f08080;margin-top:8px"><span class="aicon">🔒</span> Admin Logout</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div class="admin-main">
+
+        <!-- DASHBOARD -->
+        <div class="admin-panel active" id="aDash">
+          <div class="admin-topbar">
+            <h1>Dashboard</h1>
+            <div style="display:flex;gap:10px;align-items:center">
+              <span style="font-size:13px;color:var(--stone)" id="dashDate"></span>
+              <button class="btn btn-dk btn-sm" onclick="switchAdmin('aBookings')">+ New Booking</button>
+            </div>
+          </div>
+          <div class="stat-cards">
+            <div class="stat-card"><div class="stat-val" id="statBookings">—</div><div class="stat-lbl">Total Bookings</div><div class="stat-change">↑ 12% this month</div></div>
+            <div class="stat-card"><div class="stat-val">€284k</div><div class="stat-lbl">Total Revenue</div><div class="stat-change">↑ 8% this month</div></div>
+            <div class="stat-card"><div class="stat-val">12</div><div class="stat-lbl">Active Venues</div><div class="stat-change">2 new this quarter</div></div>
+            <div class="stat-card"><div class="stat-val">98%</div><div class="stat-lbl">Satisfaction</div><div class="stat-change">↑ 2% this month</div></div>
+          </div>
+          <div class="admin-card">
+            <h3>Monthly Revenue</h3>
+            <div class="chart-bar-wrap" id="revenueChart"></div>
+          </div>
+          <div class="admin-card">
+            <h3>Recent Bookings</h3>
+            <table class="admin-table" id="dashRecentTable"></table>
+          </div>
+        </div>
+
+        <!-- BOOKINGS -->
+        <div class="admin-panel" id="aBookings" style="display:none">
+          <div class="admin-topbar"><h1>All Bookings</h1></div>
+          <div class="admin-card">
+            <div class="admin-filters">
+              <input class="admin-filter-inp" placeholder="Search by name, venue…" id="admSearchBk" oninput="renderBookingsTable()" />
+              <select class="admin-filter-inp" id="admStatusF" onchange="renderBookingsTable()">
+                <option value="">All Statuses</option><option>Confirmed</option><option>Pending</option><option>Cancelled</option>
+              </select>
+              <input class="admin-filter-inp" type="month" id="admMonthF" onchange="renderBookingsTable()" />
+              <span id="admCount" style="font-size:13px;color:var(--stone);margin-left:auto"></span>
+            </div>
+            <table class="admin-table" id="adminBookingsTable">
+              <thead><tr><th>ID</th><th>Client Name</th><th>Email</th><th>Wedding Date</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="bookingsTableBody">
+                <tr><td colspan="6" style="text-align:center;padding:20px">Connecting to database…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- VENUES -->
+        <div class="admin-panel" id="aVenues" style="display:none">
+          <div class="admin-topbar">
+            <h1>Venue Management</h1>
+            <button class="btn btn-dk btn-sm" onclick="alert('Add venue form coming soon!')">+ Add Venue</button>
+          </div>
+          <div class="admin-card">
+            <table class="admin-table" id="adminVenueTable"></table>
+          </div>
+        </div>
+
+        <!-- CLIENTS -->
+        <div class="admin-panel" id="aClients" style="display:none">
+          <div class="admin-topbar"><h1>Client List</h1></div>
+          <div class="admin-card">
+            <div class="admin-filters">
+              <input class="admin-filter-inp" placeholder="Search clients…" id="admSearchCl" oninput="renderClientsTable()" />
+            </div>
+            <table class="admin-table" id="adminClientsTable">
+              <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead>
+              <tbody id="clientTableBody">
+                <tr><td colspan="5" style="text-align:center">Loading database…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- REVENUE -->
+        <div class="admin-panel" id="aRevenue" style="display:none">
+          <div class="admin-topbar"><h1>Revenue Overview</h1></div>
+          <div class="stat-cards">
+            <div class="stat-card"><div class="stat-val">€284k</div><div class="stat-lbl">YTD Revenue</div></div>
+            <div class="stat-card"><div class="stat-val">€6,044</div><div class="stat-lbl">Avg Booking</div></div>
+            <div class="stat-card"><div class="stat-val">47</div><div class="stat-lbl">Bookings</div></div>
+            <div class="stat-card"><div class="stat-val">32%</div><div class="stat-lbl">Profit Margin</div></div>
+          </div>
+          <div class="admin-card">
+            <h3>Revenue by Region</h3>
+            <div id="regionChart" style="margin-top:16px"></div>
+          </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="admin-panel" id="aSettings" style="display:none">
+          <div class="admin-topbar"><h1>System Settings</h1></div>
+          <div class="admin-card">
+            <h3>General</h3>
+            <div style="display:flex;flex-direction:column;gap:18px;margin-top:8px">
+              <div class="frow">
+                <div class="fgrp"><label class="flbl">Site Name</label><input class="finp" value="Lahore Grand Venues Wedding Venues" /></div>
+                <div class="fgrp"><label class="flbl">Support Email</label><input class="finp" type="email" value="hello@lahoregrandvenues.com" /></div>
+              </div>
+              <div class="frow">
+                <div class="fgrp"><label class="flbl">Deposit %</label><input class="finp" type="number" value="20" /></div>
+                <div class="fgrp">
+                  <label class="flbl">Default Currency</label>
+                  <select class="fsel2"><option>PKR (₨)</option><option>EUR (€)</option><option>GBP (£)</option><option>USD ($)</option></select>
+                </div>
+              </div>
+              <button class="fsub" style="width:auto;padding:13px 32px" onclick="alert('Settings saved!')">Save Settings</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /admin-main -->
+    </div><!-- /admin-wrap -->
+  </div>
+
+  <script src="./asserts/JS/shared.js"></script>
+  <script src="./asserts/JS/data.js"></script>
+  <script>
+    const API_BASE       = 'http://localhost:5000/api';
+    const ADMIN_EMAIL    = 'admin@lgv.com';
+    const ADMIN_PASSWORD = 'Admin@1234';
+
+    // ── Auth gate ──
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!isAdminLoggedIn()) {
+        openAdminLoginModal();
+      } else {
+        initDashboard();
+      }
+      document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-US', { month:'long', year:'numeric' });
+    });
+
+    function openAdminLoginModal() {
+      document.getElementById('adminLoginOverlay').style.display = 'flex';
+      setTimeout(() => document.getElementById('adminEmailInp').focus(), 100);
+    }
+    function closeAdminLoginModal(e) {
+      if (e && e.target !== document.getElementById('adminLoginOverlay')) return;
+      document.getElementById('adminLoginOverlay').style.display = 'none';
+      if (!isAdminLoggedIn()) window.location.href = 'index.html';
+    }
+    function adminModalLogin() {
+      const email = document.getElementById('adminEmailInp').value.trim();
+      const pw    = document.getElementById('adminPwInp').value;
+      if (email.toLowerCase() !== ADMIN_EMAIL || pw !== ADMIN_PASSWORD) {
+        showMsg('adminLoginMsg','✗ Invalid admin credentials.','error');
+        document.getElementById('adminPwInp').value = '';
+        return;
+      }
+      localStorage.setItem(ADMIN_KEY, 'true');
+      document.getElementById('adminLoginOverlay').style.display = 'none';
+      toast('✓ Admin access granted. Welcome!');
+      initDashboard();
+    }
+    function adminLogout() {
+      localStorage.removeItem(ADMIN_KEY);
+      toast('Admin session ended.');
+      setTimeout(() => window.location.href = 'index.html', 800);
+    }
+
+    // ── Panel switching ──
+    function switchAdmin(panelId) {
+      document.querySelectorAll('.admin-panel').forEach(p => p.style.display = 'none');
+      document.getElementById(panelId).style.display = 'block';
+      document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('active'));
+      const key = 'an' + panelId.replace(/^a/, '').replace(/^\w/, c => c.toUpperCase());
+      const el  = document.getElementById('an' + panelId.replace(/^a/, ''));
+      if (el) el.classList.add('active');
+      if (panelId === 'aBookings') renderBookingsTable();
+      if (panelId === 'aClients')  renderClientsTable();
+      if (panelId === 'aVenues')   renderAdminVenues();
+    }
+
+    function initDashboard() {
+      renderRevenueChart();
+      renderRegionChart();
+      renderDashRecent();
+    }
+
+    // ── Bookings ──
+    async function renderBookingsTable() {
+      const tbody = document.getElementById('bookingsTableBody');
+      const s   = (document.getElementById('admSearchBk') || {}).value?.toLowerCase() || '';
+      const sf  = (document.getElementById('admStatusF')  || {}).value || '';
+      try {
+        const res  = await fetch(`${API_BASE}/bookings`);
+        const data = await res.json();
+        const filtered = data.filter(b =>
+          (!s  || (b.client_name||'').toLowerCase().includes(s) || (b.client_email||'').toLowerCase().includes(s)) &&
+          (!sf || b.status === sf.toLowerCase())
+        );
+        tbody.innerHTML = filtered.length
+          ? filtered.map(b => `<tr>
+              <td>#${b.id}</td>
+              <td><strong>${b.client_name||'N/A'}</strong></td>
+              <td>${b.client_email||'N/A'}</td>
+              <td>${b.wedding_date ? b.wedding_date.split('T')[0] : 'N/A'}</td>
+              <td><span class="status-badge status-${(b.status||'pending').toLowerCase()}">${b.status}</span></td>
+              <td><button onclick="deleteBooking(${b.id})" style="color:red;background:none;border:none;cursor:pointer;font-weight:bold">Cancel</button></td>
+            </tr>`).join('')
+          : '<tr><td colspan="6" style="text-align:center">No bookings found.</td></tr>';
+        const cnt = document.getElementById('admCount');
+        if (cnt) cnt.textContent = `${filtered.length} bookings`;
+        document.getElementById('statBookings').textContent = data.length;
+      } catch {
+        // fallback to static data
+        tbody.innerHTML = BOOKINGS.map(b => `<tr>
+          <td>${b.id}</td><td><strong>${b.client}</strong></td><td>—</td><td>${b.date}</td>
+          <td><span class="status-badge status-${b.status.toLowerCase()}">${b.status}</span></td>
+          <td><button style="color:var(--stone);background:none;border:none;cursor:pointer">—</button></td>
+        </tr>`).join('');
+        document.getElementById('statBookings').textContent = BOOKINGS.length;
+      }
+    }
+
+    async function deleteBooking(id) {
+      if (!confirm('Are you sure you want to cancel this booking?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/bookings/${id}`, { method:'DELETE' });
+        if (res.ok) { toast('Booking cancelled.'); renderBookingsTable(); }
+      } catch { alert('Failed to delete booking.'); }
+    }
+
+    // ── Clients ──
+    async function renderClientsTable() {
+      const tbody = document.getElementById('clientTableBody');
+      const s = (document.getElementById('admSearchCl') || {}).value?.toLowerCase() || '';
+      try {
+        const res   = await fetch(`${API_BASE}/auth/users`);
+        const users = await res.json();
+        const filtered = users.filter(u =>
+          !s || u.full_name.toLowerCase().includes(s) || u.email.toLowerCase().includes(s)
+        );
+        tbody.innerHTML = filtered.map(u => `<tr>
+          <td>#${u.id}</td>
+          <td><strong>${u.full_name}</strong></td>
+          <td>${u.email}</td>
+          <td><span class="badge" style="background:#d4af37;color:white;padding:2px 8px;border-radius:4px">${u.role}</span></td>
+          <td><button onclick="deleteUser(${u.id})" style="color:#f08080;background:none;border:none;cursor:pointer;font-weight:bold">Delete</button></td>
+        </tr>`).join('');
+      } catch {
+        tbody.innerHTML = '<tr><td colspan="5" style="color:var(--stone);text-align:center">Backend not connected — no client data.</td></tr>';
+      }
+    }
+
+    async function deleteUser(id) {
+      if (!confirm('Delete this user?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/auth/users/${id}`, { method:'DELETE' });
+        if (res.ok) { toast('User deleted.'); renderClientsTable(); }
+      } catch { alert('Failed to delete user.'); }
+    }
+
+    // ── Venues ──
+    function renderAdminVenues() {
+      const tbl = document.getElementById('adminVenueTable');
+      tbl.innerHTML = `<thead><tr><th>Venue</th><th>Region</th><th>Max Guests</th><th>Price</th><th>Badge</th><th>Actions</th></tr></thead><tbody>` +
+        VENUES.map(v => `<tr>
+          <td style="font-family:'Cormorant Garamond',serif;font-size:17px">${v.name}</td>
+          <td>${v.region}</td><td>${v.guests}</td><td>€${v.price.toLocaleString()}</td>
+          <td>${v.badge ? `<span class="status-badge status-confirmed">${v.badge}</span>` : '—'}</td>
+          <td>
+            <button class="admin-action-btn" style="background:var(--cream);color:var(--ch)" onclick="alert('Edit ${v.name}')">Edit</button>
+            <button class="admin-action-btn" style="background:#fce4e4;color:#c62828" onclick="alert('Delete ${v.name}')">Delete</button>
+          </td>
+        </tr>`).join('') + '</tbody>';
+    }
+
+    // ── Charts ──
+    function renderRevenueChart() {
+      const el = document.getElementById('revenueChart'); if (!el) return;
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const vals   = [18,22,35,42,68,85,72,65,48,30,25,20];
+      const max    = Math.max(...vals);
+      el.innerHTML = vals.map((v,i) =>
+        `<div class="chart-bar-col"><div class="chart-bar-val">€${v}k</div><div class="chart-bar" style="height:${(v/max)*110}px"></div><div class="chart-bar-lbl">${months[i]}</div></div>`
+      ).join('');
+    }
+
+    function renderRegionChart() {
+      const el = document.getElementById('regionChart'); if (!el) return;
+      const regions = [{n:'Tuscany',v:42,pct:'38%'},{n:'Lombardy',v:31,pct:'28%'},{n:'Amalfi',v:18,pct:'16%'},{n:'Veneto',v:12,pct:'11%'},{n:'Umbria',v:8,pct:'7%'}];
+      el.innerHTML = regions.map(r =>
+        `<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+          <div style="width:100px;font-size:13px;color:var(--stone)">${r.n}</div>
+          <div style="flex:1;height:28px;background:var(--cream);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${r.pct};background:linear-gradient(to right,var(--olive-dk),var(--sage));border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px">
+              <span style="font-size:12px;color:white;font-weight:500">${r.pct}</span>
+            </div>
+          </div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;width:60px;text-align:right">€${r.v}k</div>
+        </div>`
+      ).join('');
+    }
+
+    function renderDashRecent() {
+      const tbl = document.getElementById('dashRecentTable'); if (!tbl) return;
+      tbl.innerHTML = `<thead><tr><th>Client</th><th>Venue</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>` +
+        BOOKINGS.slice(0,5).map(b => `<tr>
+          <td>${b.client}</td><td>${b.venue}</td><td>${b.date}</td>
+          <td style="font-family:'Cormorant Garamond',serif;font-size:18px">${b.amount}</td>
+          <td><span class="status-badge status-${b.status.toLowerCase()}">${b.status}</span></td>
+        </tr>`).join('') + '</tbody>';
+    }
+  </script>
+</body>
+</html>
