@@ -100,6 +100,40 @@
       </div>
     </div>
 
+
+    <!-- ── AVAILABILITY QUICK CHECK ── -->
+    <section class="sec" style="padding-top:0">
+      <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 55%,#0f3460 100%);border-radius:20px;padding:48px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(255,215,100,0.08),transparent 70%);pointer-events:none"></div>
+        <div style="text-align:center;margin-bottom:32px">
+          <p class="sec-tag" style="color:rgba(255,215,100,0.7)">AI-Powered</p>
+          <h2 class="sec-title" style="color:white;margin-bottom:10px">Check Date Availability</h2>
+          <p style="color:rgba(255,255,255,0.5);font-size:14px;font-family:'Jost',sans-serif">Instantly find out if your wedding date is available at our hall</p>
+        </div>
+        <div style="max-width:560px;margin:0 auto">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:20px">
+            <input type="date" id="homeCheckDate"
+              style="flex:1;min-width:200px;padding:14px 18px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:white;font-family:'Jost',sans-serif;font-size:14px;outline:none"
+              onchange="homeCheckAvail()" />
+            <button onclick="homeCheckAvail()"
+              style="padding:14px 28px;background:linear-gradient(135deg,#ffd764,#f0a500);border:none;border-radius:10px;cursor:pointer;font-family:'Jost',sans-serif;font-weight:600;font-size:14px;white-space:nowrap">
+              Check Availability ✦
+            </button>
+          </div>
+          <div id="homeCheckResult" style="display:none;border-radius:12px;padding:20px 24px;text-align:center;transition:all .3s">
+            <div id="homeCheckIcon" style="font-size:28px;margin-bottom:8px"></div>
+            <div id="homeCheckText" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:white;margin-bottom:6px"></div>
+            <div id="homeCheckSub" style="font-size:13px;color:rgba(255,255,255,0.6);font-family:'Jost',sans-serif;margin-bottom:16px"></div>
+            <div id="homeCheckAlts" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px"></div>
+            <button onclick="window.location.href='hall.html'"
+              style="padding:11px 26px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;cursor:pointer;font-family:'Jost',sans-serif;font-size:13px">
+              Go to Hall Booking →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="sec">
       <p class="sec-tag" style="margin-bottom:24px">Featured venue</p>
       <div class="ven-layout">
@@ -193,6 +227,52 @@
     const urlParam = new URLSearchParams(window.location.search).get('filter');
     if (urlParam) {
       window.location.href = 'browse.html?filter=' + urlParam;
+    }
+  </script>
+  <script>
+    function getBookedDates() {
+      try { const s = localStorage.getItem('lgv_booked_dates'); return s ? JSON.parse(s) : []; } catch(e) { return []; }
+    }
+    async function homeCheckAvail() {
+      const dateVal = document.getElementById('homeCheckDate').value;
+      if (!dateVal) return;
+      const result  = document.getElementById('homeCheckResult');
+      const icon    = document.getElementById('homeCheckIcon');
+      const text    = document.getElementById('homeCheckText');
+      const sub     = document.getElementById('homeCheckSub');
+      const altsEl  = document.getElementById('homeCheckAlts');
+      result.style.display = 'block';
+      result.style.background = 'rgba(255,255,255,0.05)';
+      icon.textContent = '⟡'; text.textContent = 'Checking…'; sub.textContent = ''; altsEl.innerHTML = '';
+      const bookedDates = getBookedDates();
+      const isBooked = bookedDates.includes(dateVal);
+      const dateObj = new Date(dateVal + 'T00:00:00');
+      const label = dateObj.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+      if (!isBooked) {
+        result.style.background = 'rgba(80,200,120,0.1)';
+        result.style.border = '1px solid rgba(80,200,120,0.25)';
+        icon.textContent = '✓';
+        text.textContent = 'Available!';
+        sub.textContent = label + ' is free — book it before someone else does.';
+      } else {
+        result.style.background = 'rgba(220,80,80,0.1)';
+        result.style.border = '1px solid rgba(220,80,80,0.25)';
+        icon.textContent = '✕';
+        text.textContent = 'Date Unavailable';
+        sub.textContent = label + ' is already booked. See alternatives below:';
+        // Show nearby available dates
+        const alts = [];
+        for (let i = 1; i <= 60 && alts.length < 3; i++) {
+          const d = new Date(dateObj); d.setDate(d.getDate() + i);
+          const ds = d.toISOString().split('T')[0];
+          if (!bookedDates.includes(ds)) alts.push(ds);
+        }
+        altsEl.innerHTML = alts.map(d => {
+          const l = new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+          return `<button onclick="document.getElementById('homeCheckDate').value='${d}';homeCheckAvail()"
+            style="padding:7px 14px;border:1px solid rgba(255,215,100,0.3);border-radius:8px;background:rgba(255,215,100,0.08);color:#ffd764;font-size:12px;cursor:pointer;font-family:'Jost',sans-serif">${l}</button>`;
+        }).join('');
+      }
     }
   </script>
 </body>

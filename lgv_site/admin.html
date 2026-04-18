@@ -51,6 +51,7 @@
             <li><a onclick="switchAdmin('aVenues')"                  id="anVenues">  <span class="aicon">🏛️</span> Venues</a></li>
             <li><a onclick="switchAdmin('aClients')"                 id="anClients"> <span class="aicon">👥</span> Clients</a></li>
             <li><a onclick="switchAdmin('aRevenue')"                 id="anRevenue"> <span class="aicon">💰</span> Revenue</a></li>
+            <li><a onclick="switchAdmin('aCalendar')"                id="anCalendar"><span class="aicon">📅</span> Booking Calendar</a></li>
             <li><a onclick="switchAdmin('aSettings')"                id="anSettings"><span class="aicon">⚙️</span> Settings</a></li>
             <li><a href="index.html" style="margin-top:20px;border-top:1px solid rgba(255,255,255,0.07);padding-top:20px"><span class="aicon">←</span> Back to Site</a></li>
             <li><a onclick="adminLogout()" style="color:#f08080;margin-top:8px"><span class="aicon">🔒</span> Admin Logout</a></li>
@@ -146,6 +147,68 @@
           <div class="admin-card">
             <h3>Revenue by Region</h3>
             <div id="regionChart" style="margin-top:16px"></div>
+          </div>
+        </div>
+
+        <!-- BOOKING CALENDAR MANAGEMENT -->
+        <div class="admin-panel" id="aCalendar" style="display:none">
+          <div class="admin-topbar">
+            <h1>Booking Calendar</h1>
+            <div style="display:flex;gap:10px;align-items:center">
+              <span style="font-size:13px;color:var(--stone)" id="calAdminStatus">Manage which dates are booked</span>
+              <button class="btn btn-dk btn-sm" onclick="saveAdminDates()">💾 Save Changes</button>
+            </div>
+          </div>
+          <div class="admin-card">
+            <h3 style="margin-bottom:4px">Date Availability Manager</h3>
+            <p style="font-size:13px;color:var(--stone);margin-bottom:24px">Click on any date to toggle it between Available and Booked. Red = Booked, White = Available. Changes are saved to the system and reflected on the booking page immediately.</p>
+            
+            <!-- AI Helper -->
+            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:14px;padding:22px 26px;margin-bottom:28px;border:1px solid rgba(255,215,100,0.18)">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg,#ffd764,#f0a500);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">✦</div>
+                <div>
+                  <div style="font-family:'Cormorant Garamond',serif;font-size:16px;color:#ffd764">AI Booking Advisor</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase">Ask me about scheduling</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <input id="adminAiQ" style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;color:white;font-family:'Jost',sans-serif;font-size:13px;outline:none" placeholder="e.g. Which weekends in June are still available?" onkeydown="if(event.key==='Enter')askAdminAI()" />
+                <button onclick="askAdminAI()" style="background:linear-gradient(135deg,#ffd764,#f0a500);border:none;border-radius:8px;padding:10px 18px;cursor:pointer;font-family:'Jost',sans-serif;font-weight:600;font-size:13px">Ask AI</button>
+              </div>
+              <div id="adminAiResp" style="margin-top:14px;color:rgba(255,255,255,0.8);font-size:13px;line-height:1.7;font-family:'Jost',sans-serif;min-height:20px"></div>
+            </div>
+
+            <!-- Calendar Navigation -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <button onclick="adminCalChange(-1)" style="background:var(--cream);border:none;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:'Jost',sans-serif;font-size:13px;font-weight:500">← Previous</button>
+              <div style="text-align:center">
+                <div id="adminCalTitle" style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600"></div>
+                <div id="adminCalBookedCount" style="font-size:12px;color:var(--stone);margin-top:2px"></div>
+              </div>
+              <button onclick="adminCalChange(1)"  style="background:var(--cream);border:none;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:'Jost',sans-serif;font-size:13px;font-weight:500">Next →</button>
+            </div>
+
+            <div id="adminCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:20px"></div>
+
+            <!-- Legend -->
+            <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--stone)">
+                <div style="width:16px;height:16px;border-radius:4px;background:linear-gradient(135deg,#c0392b,#e74c3c)"></div>Booked (click to free)
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--stone)">
+                <div style="width:16px;height:16px;border-radius:4px;background:#f0fff4;border:1px solid #7ee8a2"></div>Available (click to book)
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--stone)">
+                <div style="width:16px;height:16px;border-radius:4px;border:2px solid var(--gold)"></div>Today
+              </div>
+            </div>
+
+            <!-- Booked Dates List -->
+            <div style="border-top:1px solid rgba(0,0,0,0.06);padding-top:24px">
+              <h4 style="font-family:'Cormorant Garamond',serif;font-size:18px;margin-bottom:14px">All Booked Dates</h4>
+              <div id="adminBookedList" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+            </div>
           </div>
         </div>
 
@@ -364,6 +427,196 @@
           <td><span class="status-badge status-${b.status.toLowerCase()}">${b.status}</span></td>
         </tr>`).join('') + '</tbody>';
     }
+
+    // ═══════════ BOOKING CALENDAR ADMIN ═══════════
+
+    let adminCalYear = new Date().getFullYear();
+    let adminCalMonth = new Date().getMonth();
+
+    function getAdminBookedDates() {
+      try {
+        const stored = localStorage.getItem('lgv_booked_dates');
+        if (stored) return JSON.parse(stored);
+      } catch(e) {}
+      // Default dates
+      const now = new Date();
+      const yr = now.getFullYear();
+      const mo = String(now.getMonth() + 1).padStart(2,'0');
+      return [
+        `${yr}-${mo}-05`, `${yr}-${mo}-08`, `${yr}-${mo}-14`,
+        `${yr}-${mo}-19`, `${yr}-${mo}-22`, `${yr}-${mo}-27`
+      ];
+    }
+
+    let adminBookedDates = getAdminBookedDates();
+
+    async function saveAdminDates() {
+      // Save to localStorage (immediate, works offline)
+      localStorage.setItem('lgv_booked_dates', JSON.stringify(adminBookedDates));
+      renderAdminCal();
+      renderAdminBookedList();
+
+      // Also sync to backend DB (non-blocking)
+      try {
+        await fetch(`${API_BASE}/hall/admin/bulk-update`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dates: adminBookedDates })
+        });
+      } catch(e) { console.warn('Backend sync skipped (offline mode)'); }
+
+      const btn = event.target;
+      const orig = btn.textContent;
+      btn.textContent = '✅ Saved!';
+      btn.style.background = '#7ee8a2';
+      setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
+    }
+
+    function adminCalChange(d) {
+      adminCalMonth += d;
+      if (adminCalMonth > 11) { adminCalMonth = 0; adminCalYear++; }
+      if (adminCalMonth < 0)  { adminCalMonth = 11; adminCalYear--; }
+      renderAdminCal();
+    }
+
+    function toggleAdminDate(dateStr) {
+      const idx = adminBookedDates.indexOf(dateStr);
+      if (idx > -1) {
+        adminBookedDates.splice(idx, 1);
+      } else {
+        adminBookedDates.push(dateStr);
+        adminBookedDates.sort();
+      }
+      // Auto-save
+      localStorage.setItem('lgv_booked_dates', JSON.stringify(adminBookedDates));
+      renderAdminCal();
+      renderAdminBookedList();
+    }
+
+    function renderAdminCal() {
+      const mn = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const titleEl = document.getElementById('adminCalTitle');
+      const countEl = document.getElementById('adminCalBookedCount');
+      const grid = document.getElementById('adminCalGrid');
+      if (!titleEl || !grid) return;
+
+      titleEl.textContent = `${mn[adminCalMonth]} ${adminCalYear}`;
+      
+      // Count booked days in this month
+      const monthStr = `${adminCalYear}-${String(adminCalMonth+1).padStart(2,'0')}`;
+      const bookedInMonth = adminBookedDates.filter(d => d.startsWith(monthStr)).length;
+      const daysInMonth = new Date(adminCalYear, adminCalMonth+1, 0).getDate();
+      countEl.textContent = `${bookedInMonth} booked · ${daysInMonth - bookedInMonth} available`;
+
+      const first = new Date(adminCalYear, adminCalMonth, 1).getDay();
+      const days  = new Date(adminCalYear, adminCalMonth + 1, 0).getDate();
+      const today = new Date();
+
+      let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d =>
+        `<div style="text-align:center;font-size:11px;letter-spacing:1px;color:var(--stone);padding:6px 0;text-transform:uppercase">${d}</div>`
+      ).join('');
+
+      for (let i = 0; i < first; i++) html += `<div></div>`;
+
+      for (let d = 1; d <= days; d++) {
+        const dateStr = `${adminCalYear}-${String(adminCalMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const isBooked = adminBookedDates.includes(dateStr);
+        const isToday = d === today.getDate() && adminCalMonth === today.getMonth() && adminCalYear === today.getFullYear();
+
+        const styles = isBooked
+          ? 'background:linear-gradient(135deg,#c0392b,#e74c3c);color:white;font-weight:700;box-shadow:0 2px 8px rgba(200,50,50,0.3)'
+          : 'background:#f0fff4;border:1px solid rgba(126,232,162,0.3);color:#2d6a4f';
+
+        const todayStyle = isToday ? 'outline:2px solid var(--gold);outline-offset:2px;' : '';
+
+        html += `<div onclick="toggleAdminDate('${dateStr}')" 
+          title="${isBooked ? 'Click to mark as Available' : 'Click to mark as Booked'}"
+          style="text-align:center;padding:10px 4px;border-radius:8px;font-size:13px;cursor:pointer;
+                 transition:all 0.2s;user-select:none;${styles};${todayStyle}">
+          ${d}
+          ${isBooked ? '<br><span style="font-size:9px;opacity:0.8;letter-spacing:0.5px">BOOKED</span>' : ''}
+        </div>`;
+      }
+
+      grid.innerHTML = html;
+      renderAdminBookedList();
+    }
+
+    function renderAdminBookedList() {
+      const el = document.getElementById('adminBookedList');
+      if (!el) return;
+      if (adminBookedDates.length === 0) {
+        el.innerHTML = '<span style="color:var(--stone);font-size:13px">No dates currently booked.</span>';
+        return;
+      }
+      el.innerHTML = [...adminBookedDates].sort().map(d => {
+        const dObj = new Date(d + 'T00:00:00');
+        const label = dObj.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+        return `<div style="display:flex;align-items:center;gap:8px;background:#fff5f5;border:1px solid #ffd0d0;border-radius:8px;padding:8px 14px;font-size:13px;font-family:'Jost',sans-serif">
+          <span style="color:#c0392b;font-weight:600">${label}</span>
+          <button onclick="toggleAdminDate('${d}')" title="Remove booking" 
+            style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:16px;line-height:1;padding:0 4px">✕</button>
+        </div>`;
+      }).join('');
+    }
+
+    // ── Admin AI Advisor ──
+    async function askAdminAI() {
+      const question = document.getElementById('adminAiQ').value.trim();
+      if (!question) return;
+      const respEl = document.getElementById('adminAiResp');
+      respEl.textContent = '⟡ Thinking…';
+
+      const bookedDates = adminBookedDates;
+      const now = new Date();
+      const prompt = `You are a booking calendar assistant for Lahore Grand Venues, a premium wedding venue.
+
+Current date: ${now.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}
+Booked dates (YYYY-MM-DD): ${JSON.stringify(bookedDates)}
+
+Admin question: "${question}"
+
+Provide a helpful, concise answer. If they ask about available dates, list specific dates. If scheduling advice, be practical. Keep it under 100 words.`;
+
+      try {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 1000,
+            messages: [{ role: "user", content: prompt }]
+          })
+        });
+        const data = await res.json();
+        respEl.textContent = data.content?.[0]?.text || 'Unable to get response.';
+      } catch(e) {
+        respEl.textContent = 'AI temporarily unavailable. Please check your connection.';
+      }
+    }
+
+    // Initialize calendar when panel is opened — fetch from backend first
+    const origSwitch = window.switchAdmin;
+    window.switchAdmin = async function(panelId) {
+      if (typeof origSwitch === 'function') origSwitch(panelId);
+      if (panelId === 'aCalendar') {
+        // Try fetching latest from backend
+        try {
+          const res = await fetch(`${API_BASE}/hall/booked-dates`);
+          const data = await res.json();
+          if (data.bookedDates && Array.isArray(data.bookedDates)) {
+            adminBookedDates = data.bookedDates;
+            localStorage.setItem('lgv_booked_dates', JSON.stringify(adminBookedDates));
+          } else {
+            adminBookedDates = getAdminBookedDates();
+          }
+        } catch(e) {
+          adminBookedDates = getAdminBookedDates(); // fallback to localStorage
+        }
+        setTimeout(renderAdminCal, 100);
+      }
+    };
+
   </script>
 </body>
 </html>

@@ -226,3 +226,35 @@ function togglePw(id, btn) {
 function toggleChip(el) {
     el.classList.toggle('sel');
 }
+
+// ── Auth Tab Switcher ──
+function switchAuthTab(tab) {
+    const loginDiv  = document.getElementById('authLogin');
+    const signupDiv = document.getElementById('authSignup');
+    const forgotDiv = document.getElementById('authForgot');
+    const tabLogin  = document.getElementById('tabLogin');
+    const tabSignup = document.getElementById('tabSignup');
+
+    // Hide all panels
+    if (loginDiv)  loginDiv.style.display  = 'none';
+    if (signupDiv) signupDiv.style.display = 'none';
+    if (forgotDiv) forgotDiv.style.display = 'none';
+
+    // Remove active from both tabs
+    if (tabLogin)  tabLogin.classList.remove('active');
+    if (tabSignup) tabSignup.classList.remove('active');
+
+    // Show correct panel
+    if (tab === 'login') {
+        if (loginDiv)  loginDiv.style.display  = '';
+        if (tabLogin)  tabLogin.classList.add('active');
+    } else if (tab === 'signup') {
+        if (signupDiv) signupDiv.style.display = '';
+        if (tabSignup) tabSignup.classList.add('active');
+    }
+}
+
+// ── Social Auth (Google / Facebook) ──
+function socialAuth(provider) {
+    toast('⚠ ' + provider + ' login coming soon!');
+}
